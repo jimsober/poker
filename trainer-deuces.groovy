@@ -97,6 +97,7 @@ def deal(List deck) {
 
 def hold_default(List hand) {
     List hold_hand = []
+    List alt_hold_hand = []
     List wild_cards = []
     String default_style = "${(char)27}[37;40m"
     for (card in hand) {
@@ -109,22 +110,23 @@ def hold_default(List hand) {
         hold_hand = wild_cards.collect()
     }
     else if (wild_cards.size() == 3) {
-        (hold_hand, correct_strategy) = three_deuces(hand)
+        (hold_hand, alt_hold_hand, correct_strategy) = three_deuces(hand)
     }
     else if (wild_cards.size() == 2) {
-        (hold_hand, correct_strategy) = two_deuces(hand)
+        (hold_hand, alt_hold_hand, correct_strategy) = two_deuces(hand)
     }
     else if (wild_cards.size() == 1) {
-        (hold_hand, correct_strategy) = one_deuce(hand)
+        (hold_hand, alt_hold_hand, correct_strategy) = one_deuce(hand)
     }
     else {
-        (hold_hand, correct_strategy) = no_deuces(hand)
+        (hold_hand, alt_hold_hand, correct_strategy) = no_deuces(hand)
     }
-    return [hold_hand, correct_strategy]
+    return [hold_hand, alt_hold_hand, correct_strategy]
 }
 
 def three_deuces(List hand) {
     List hold_hand = []
+    List alt_hold_hand = []
     List ranks = []
     List suits = []
     List deuceless_ranks = []
@@ -184,11 +186,12 @@ def three_deuces(List hand) {
             hold_hand = wild_cards.collect()
         }
     }
-    return [hold_hand, correct_strategy]
+    return [hold_hand, alt_hold_hand, correct_strategy]
 }
 
 def two_deuces(List hand) {
     List hold_hand = []
+    List alt_hold_hand = []
     List ranks = []
     List suits = []
     List deuceless_ranks = []
@@ -309,11 +312,12 @@ def two_deuces(List hand) {
             hold_hand = wild_cards.collect()
         }
     }
-    return [hold_hand, correct_strategy]
+    return [hold_hand, alt_hold_hand, correct_strategy]
 }
 
 def one_deuce(List hand) {
     List hold_hand = []
+    List alt_hold_hand = []
     List ranks = []
     List suits = []
     List deuceless_ranks = []
@@ -725,49 +729,38 @@ def one_deuce(List hand) {
             hold_hand = wild_cards.collect()
         }
     }
-    return [hold_hand, correct_strategy]
+    return [hold_hand, alt_hold_hand, correct_strategy]
 }
 
 def no_deuces(List hand) {
     List hold_hand = []
+    List alt_hold_hand = []
     String correct_strategy = 'Draw five new cards'
     List ranks = []
     List suits = []
-    List deuceless_ranks = []
-    List deuceless_suits = []
     List high_cards = []
-    List wild_cards = []
-    List max_deuceless_suit_vals = []
-    List deuceless_rank_vals = []
+    List rank_vals = []
     for (card in hand) {
         ranks.add(card[0][0])
         suits.add(card[0][1])
         if (card[0][0] in ['J','Q','K','A']) {
             high_cards.add(card)
         }
-        if (card[0][0] == '2') {
-            wild_cards.add(card)
+        if (card[1] in rank_vals) {
         }
         else {
-            deuceless_ranks.add(card[0][0])
-            deuceless_suits.add(card[0][1])
-        }
-        if (card[1] in deuceless_rank_vals || card[1] == 2) {
-        }
-        else {
-            deuceless_rank_vals.add(card[1])
+            rank_vals.add(card[1])
         }
     }
     Map grouped_ranks = ranks.countBy { it }
     Map grouped_suits = suits.countBy { it }
-    Map grouped_deuceless_ranks = deuceless_ranks.countBy { it }
-    Map grouped_deuceless_suits = deuceless_suits.countBy { it }
+    List max_suit_vals = []
     for (card in hand) {
-        if (card[0][1] == grouped_deuceless_suits.max{ it.value }.key) {
-            if (card[1] in max_deuceless_suit_vals || card[1] == 2) {
+        if (card[0][1] == grouped_suits.max{ it.value }.key) {
+            if (card[1] in max_suit_vals || card[1] == 2) {
             }
             else {
-                max_deuceless_suit_vals.add(card[1])
+                max_suit_vals.add(card[1])
             }
         }
     }
@@ -777,11 +770,11 @@ def no_deuces(List hand) {
         hold_hand = hand.collect()
     }
     //four of a royal flush
-    else if (grouped_deuceless_suits.max{ it.value }.value == 4 && max_deuceless_suit_vals.sort() in \
+    else if (grouped_suits.max{ it.value }.value == 4 && max_suit_vals.sort() in \
       [[10,11,12,13],[10,11,12,14],[10,11,13,14],[10,12,13,14],[11,12,13,14]]) {
         correct_strategy = 'Four of a royal flush'
         for (card in hand) {
-            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_deuceless_suit_vals) {
+            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_suit_vals) {
                 hold_hand.add(card)
             }
         }
@@ -833,24 +826,24 @@ def no_deuces(List hand) {
         hold_hand = hand.collect()
     }
     //four of a straight flush
-    else if (grouped_suits.max{ it.value }.value == 4 && max_deuceless_suit_vals.sort() in [[3,4,5,14],[3,4,5,6],\
+    else if (grouped_suits.max{ it.value }.value == 4 && max_suit_vals.sort() in [[3,4,5,14],[3,4,5,6],\
       [3,4,5,7],[3,4,6,7],[3,5,6,7],[4,5,6,7],[4,5,6,8],[4,5,7,8],[4,6,7,8],[5,6,7,8],[5,6,7,9],[5,6,8,9],\
       [5,7,8,9],[6,7,8,9],[6,7,8,10],[6,7,9,10],[6,8,9,10],[7,8,9,10],[7,8,9,11],[7,8,10,11],[7,9,10,11],\
       [8,9,10,11],[8,9,10,12],[8,9,11,12],[8,10,11,12],[9,10,11,12],[9,10,11,13],[9,10,12,13],[9,11,12,13],\
       [10,11,12,13],[10,11,12,14],[10,11,13,14],[10,12,13,14],[11,12,13,14]]) {
         correct_strategy = 'Four of a straight flush'
         for (card in hand) {
-            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_deuceless_suit_vals) {
+            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_suit_vals) {
                 hold_hand.add(card)
             }
         }
     }
     //three of a royal flush
-    else if (grouped_suits.max{ it.value }.value == 3 && max_deuceless_suit_vals.sort() in \
+    else if (grouped_suits.max{ it.value }.value == 3 && max_suit_vals.sort() in \
       [[10,11,12],[10,11,13],[10,11,14],[10,12,13],[10,12,14],[10,13,14], \
       [11,12,13],[11,12,14],[11,13,14],[12,13,14]] || \
-      grouped_suits.max{ it.value }.value == 4 && max_deuceless_suit_vals.sort()[0] == 10 || \
-      grouped_suits.max{ it.value }.value == 4 && max_deuceless_suit_vals.sort()[1..3] in \
+      grouped_suits.max{ it.value }.value == 4 && max_suit_vals.sort()[0] == 10 || \
+      grouped_suits.max{ it.value }.value == 4 && max_suit_vals.sort()[1..3] in \
       [[10,11,12],[10,11,13],[10,11,14],[10,12,13],[10,12,14],[10,13,14], \
       [11,12,13],[11,12,14],[11,13,14],[12,13,14]]) {
         correct_strategy = 'Three of a royal flush'
@@ -869,10 +862,18 @@ def no_deuces(List hand) {
                 pair_hand.add(card)
             }
         }
-        List high_pair = pair_hand.max{ it[1] }
-        for (card in hand) {
-            if (card[1] == high_pair[1]) {
-                hold_hand.add(card)
+        if (pair_hand.size() == 2) {
+            hold_hand = pair_hand
+        }
+        else {
+            List high_pair = pair_hand.max{ it[1] }
+            for (card in pair_hand) {
+                if (card[1] == high_pair[1]) {
+                    hold_hand.add(card)
+                }
+                else {
+                    alt_hold_hand.add(card)
+                }
             }
         }
     }
@@ -880,34 +881,32 @@ def no_deuces(List hand) {
     else if (grouped_suits.max{ it.value }.value == 4) {
         correct_strategy = 'Four of a flush'
         for (card in hand) {
-            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_deuceless_suit_vals) {
+            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_suit_vals) {
                 hold_hand.add(card)
             }
         }
     }
     //four of an open straight
-    else if (deuceless_rank_vals.size() == 5 && deuceless_rank_vals.sort()[0..3] in [[3,4,5,6],[4,5,6,7],[5,6,7,8],\
+    else if (rank_vals.size() == 5 && rank_vals.sort()[0..3] in [[3,4,5,6],[4,5,6,7],[5,6,7,8],\
       [6,7,8,9],[7,8,9,10],[8,9,10,11],[9,10,11,12],[10,11,12,13]]) {
         correct_strategy = 'Four of an open straight'
-        hold_hand = wild_cards.collect()
         for (card in hand) {
-            if (card[1] in deuceless_rank_vals.sort()[0..3]) {
+            if (card[1] in rank_vals.sort()[0..3]) {
                 hold_hand.add(card)
             }
         }
     }
-    else if (deuceless_rank_vals.size() == 5 && deuceless_rank_vals.sort()[1..4] in [[3,4,5,6],[4,5,6,7],[5,6,7,8],\
+    else if (rank_vals.size() == 5 && rank_vals.sort()[1..4] in [[3,4,5,6],[4,5,6,7],[5,6,7,8],\
       [6,7,8,9],[7,8,9,10],[8,9,10,11],[9,10,11,12],[10,11,12,13]]) {
         correct_strategy = 'Four of an open straight'
-        hold_hand = wild_cards.collect()
         for (card in hand) {
-            if (card[1] in deuceless_rank_vals.sort()[1..4]) {
+            if (card[1] in rank_vals.sort()[1..4]) {
                 hold_hand.add(card)
             }
         }
     }
     //three of a straight flush
-    else if (grouped_suits.max{ it.value }.value == 3 && max_deuceless_suit_vals.sort() in [[3,4,14],[3,5,14],\
+    else if (grouped_suits.max{ it.value }.value == 3 && max_suit_vals.sort() in [[3,4,14],[3,5,14],\
       [4,5,14],[3,4,5],[3,4,6],[3,4,7],[3,5,6],[3,5,7],[3,6,7],[4,5,6],[4,5,7],[4,5,8],[4,6,7],[4,6,8],[4,7,8],\
       [5,6,7],[5,6,8],[5,6,9],[5,7,8],[5,7,9],[5,8,9],[6,7,8],[6,7,9],[6,7,10],[6,8,9],[6,8,10],[6,9,10],[7,8,9],\
       [7,8,10],[7,8,11],[7,9,10],[7,9,11],[7,10,11],[8,9,10],[8,9,11],[8,9,12],[8,10,11],[8,10,12],[8,11,12],\
@@ -915,56 +914,56 @@ def no_deuces(List hand) {
       [10,12,14],[10,13,14],[11,12,13],[11,12,14],[11,13,14],[12,13,14]]) {
         correct_strategy = 'Three of a straight flush'
         for (card in hand) {
-            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_deuceless_suit_vals) {
+            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_suit_vals) {
                 hold_hand.add(card)
             }
         }
     }
     //ten-queen suited or jack-queen suited
-    else if (grouped_deuceless_suits.max{ it.value }.value == 2 && max_deuceless_suit_vals.sort() in [[10,12]] || \
-      grouped_deuceless_suits.max{ it.value }.value == 3 && max_deuceless_suit_vals.sort()[1..2] in [[10,12]]) {
+    else if (grouped_suits.max{ it.value }.value == 2 && max_suit_vals.sort() in [[10,12]] || \
+      grouped_suits.max{ it.value }.value == 3 && max_suit_vals.sort()[1..2] in [[10,12]]) {
         correct_strategy = 'Ten-queen suited'
         for (card in hand) {
-            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_deuceless_suit_vals && \
+            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_suit_vals && \
                 card[1] in [10,12]) {
                 hold_hand.add(card)
             }
         }
     }
-    else if (grouped_deuceless_suits.max{ it.value }.value == 2 && max_deuceless_suit_vals.sort() in [[11,12]] || \
-      grouped_deuceless_suits.max{ it.value }.value == 3 && max_deuceless_suit_vals.sort()[1..2] in [[11,12]]) {
+    else if (grouped_suits.max{ it.value }.value == 2 && max_suit_vals.sort() in [[11,12]] || \
+      grouped_suits.max{ it.value }.value == 3 && max_suit_vals.sort()[1..2] in [[11,12]]) {
         correct_strategy = 'Jack-queen suited'
         for (card in hand) {
-            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_deuceless_suit_vals && \
+            if (card[0][1] == grouped_suits.max{ it.value }.key && card[1] in max_suit_vals && \
                 card[1] in [11,12]) {
                 hold_hand.add(card)
             }
         }
     }
     //four of a straight
-    else if (deuceless_rank_vals.size() == 5 && deuceless_rank_vals.sort()[0..3] in [[3,4,5,7],[3,4,6,7],[3,5,6,7],\
+    else if (rank_vals.size() == 5 && rank_vals.sort()[0..3] in [[3,4,5,7],[3,4,6,7],[3,5,6,7],\
       [4,5,6,8],[4,5,7,8],[4,6,7,8],[5,6,7,9],[5,6,8,9],[5,7,8,9],[6,7,8,10],[6,7,9,10],[6,8,9,10],[7,8,9,11],\
       [7,8,10,11],[7,9,10,11],[8,9,10,12],[8,9,11,12],[8,10,11,12],[9,10,11,13],[9,10,12,13],[9,11,12,13],\
       [10,11,12,14],[10,11,13,14],[10,12,13,14],[11,12,13,14]]) {
         correct_strategy = 'Four of a straight'
         for (card in hand) {
-            if (card[1] in deuceless_rank_vals.sort()[0..3]) {
+            if (card[1] in rank_vals.sort()[0..3]) {
                 hold_hand.add(card)
             }
         }
     }
-    else if (deuceless_rank_vals.size() == 5 && deuceless_rank_vals.sort()[1..4] in [[3,4,5,7],[3,4,6,7],[3,5,6,7],\
+    else if (rank_vals.size() == 5 && rank_vals.sort()[1..4] in [[3,4,5,7],[3,4,6,7],[3,5,6,7],\
       [4,5,6,8],[4,5,7,8],[4,6,7,8],[5,6,7,9],[5,6,8,9],[5,7,8,9],[6,7,8,10],[6,7,9,10],[6,8,9,10],[7,8,9,11],\
       [7,8,10,11],[7,9,10,11],[8,9,10,12],[8,9,11,12],[8,10,11,12],[9,10,11,13],[9,10,12,13],[9,11,12,13],\
       [10,11,12,14],[10,11,13,14],[10,12,13,14],[11,12,13,14]]) {
         correct_strategy = 'Four of a straight'
         for (card in hand) {
-            if (card[1] in deuceless_rank_vals.sort()[1..4]) {
+            if (card[1] in rank_vals.sort()[1..4]) {
                 hold_hand.add(card)
             }
         }
     }
-    else if (deuceless_rank_vals.size() == 5 && grouped_ranks in [['A':1,'3':1,'4':1,'5':1,'8':1],\
+    else if (rank_vals.size() == 5 && grouped_ranks in [['A':1,'3':1,'4':1,'5':1,'8':1],\
       ['A':1,'3':1,'4':1,'5':1,'9':1],['A':1,'0':1,'3':1,'4':1,'5':1],['A':1,'J':1,'3':1,'4':1,'5':1],\
       ['A':1,'Q':1,'3':1,'4':1,'5':1],['A':1,'K':1,'3':1,'4':1,'5':1],]) {
         correct_strategy = 'Four of a straight'
@@ -974,7 +973,7 @@ def no_deuces(List hand) {
             }
         }
     }
-    return [hold_hand, correct_strategy]
+    return [hold_hand, alt_hold_hand, correct_strategy]
 }
 
 def show(List hand) {
@@ -987,7 +986,7 @@ def show(List hand) {
     printf '\n'
 }
 
-def discard(List hand, List hold_hand, String correct_strategy, Integer total_attempts, Integer accurate_attempts, Boolean replayed) {
+def discard(List hand, List hold_hand, List alt_hold_hand, String correct_strategy, Integer total_attempts, Integer accurate_attempts, Boolean replayed) {
     List replay_hand = hand.collect()
     List discard_hand = hand.collect()
     Boolean accurate = true
@@ -1079,16 +1078,31 @@ def discard(List hand, List hold_hand, String correct_strategy, Integer total_at
         }
         def different = discard_hand.plus(hold_hand)
         different.removeAll(discard_hand.intersect(hold_hand))
-        if (different) {
+        if (alt_hold_hand.size() == 0 && different) {
             accurate = false
             println '\7'
             System.console().readLine 'That is not the correct stategy. Press <Enter> to try again.'
             discard_hand = hand.collect()
             show(discard_hand)
         }
-        else {
+        else if (alt_hold_hand.size() == 0) {
             println 'Correct strategy! ('+correct_strategy+').'
             try_again = false
+        }
+        else {
+            different = discard_hand.plus(alt_hold_hand)
+            different.removeAll(discard_hand.intersect(alt_hold_hand))
+            if (different) {
+                accurate = false
+                println '\7'
+                System.console().readLine 'That is not the correct stategy. Press <Enter> to try again.'
+                discard_hand = hand.collect()
+                show(discard_hand)
+            }
+            else {
+                println 'Correct strategy! ('+correct_strategy+').'
+                try_again = false
+            }
         }
     }
     if (accurate && !replayed) {
@@ -1532,8 +1546,8 @@ def mainMethod() {
 
         while (replay) {
             show(hand)
-            (hold_hand, correct_strategy) = hold_default(hand)
-            (hand, replay_hand, total_attempts, accurate_attempts) = discard(hand, hold_hand, correct_strategy, total_attempts, accurate_attempts, replayed)
+            (hold_hand, alt_hold_hand, correct_strategy) = hold_default(hand)
+            (hand, replay_hand, total_attempts, accurate_attempts) = discard(hand, hold_hand, alt_hold_hand, correct_strategy, total_attempts, accurate_attempts, replayed)
             results = draw(hand, deck, num_hands)
             (payout, running_total) = show_all(results, num_hands, running_total)
             (replay, play_again, hand, running_total, replayed) = end_of_game(play_again, replay_hand, payout, running_total, replayed)
