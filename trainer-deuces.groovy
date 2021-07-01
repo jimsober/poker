@@ -235,7 +235,7 @@ def two_deuces(List hand) {
     if (wild_cards.size() == 2) {
         //wild royal flush
         if (grouped_deuceless_suits.size() == 1 && grouped_deuceless_ranks in [['0':1,'J':1,'Q':1],\
-          ['0':1,'J':1,'K':1],['0':1,'J':1,'A':1],['0':1,'Q':1,'K':1],['0':1,'Q':1,'Q':1],['0':1,'K':1,'A':1],\
+          ['0':1,'J':1,'K':1],['0':1,'J':1,'A':1],['0':1,'Q':1,'K':1],['0':1,'Q':1,'A':1],['0':1,'K':1,'A':1],\
           ['J':1,'Q':1,'K':1],['J':1,'Q':1,'A':1],['J':1,'K':1,'A':1],['Q':1,'K':1,'A':1]]) {
             correct_strategy = 'Wild royal flush'
             hold_hand = hand.collect()
@@ -300,12 +300,50 @@ def two_deuces(List hand) {
             correct_strategy = 'Three of a kind or better (four of a straight flush)'
             hold_hand = wild_cards.collect()
             for (card in hand) {
-                if (card[1] in max_deuceless_suit_vals.sort() && card[0][1] == grouped_deuceless_suits.max{ it.value}.key) {
+                if (card[1] in max_deuceless_suit_vals.sort()\
+                  && card[0][1] == grouped_deuceless_suits.max{ it.value}.key) {
                     hold_hand.add(card)
                 }
             }
         }
-
+        else if (grouped_deuceless_suits.max{ it.value }.value == 3 && max_deuceless_suit_vals.sort()[0..1] in [[3,14],\
+          [4,14],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],[4,8],[5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],\
+          [7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],[8,12],[9,10],[9,11],[9,12],[9,13],[10,11],[10,12],[10,13],\
+          [10,14],[11,12],[11,13],[11,14],[12,13],[12,14],[13,14]]) {
+            correct_strategy = 'Three of a kind or better (four of a straight flush)'
+            hold_hand = wild_cards.collect()
+            if (max_deuceless_suit_vals.sort()[1..2] in [[3,14],[4,14],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],\
+              [4,8],[5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],[7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],\
+              [8,12],[9,10],[9,11],[9,12],[9,13],[10,11],[10,12],[10,13],[10,14],[11,12],[11,13],[11,14],[12,13],\
+              [12,14],[13,14]]) {
+                alt_hold_hand = wild_cards.collect()
+                for (card in hand) {
+                    if (card[1] in max_deuceless_suit_vals.sort()[1..2]\
+                      && card[0][1] == grouped_deuceless_suits.max{ it.value}.key) {
+                        alt_hold_hand.add(card)
+                    }
+                }
+            }
+            for (card in hand) {
+                if (card[1] in max_deuceless_suit_vals.sort()[0..1]\
+                  && card[0][1] == grouped_deuceless_suits.max{ it.value}.key) {
+                    hold_hand.add(card)
+                }
+            }
+        }
+        else if (grouped_deuceless_suits.max{ it.value }.value == 3  && max_deuceless_suit_vals.sort()[1..2] in [[3,14],\
+          [4,14],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],[4,8],[5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],\
+          [7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],[8,12],[9,10],[9,11],[9,12],[9,13],[10,11],[10,12],[10,13],\
+          [10,14],[11,12],[11,13],[11,14],[12,13],[12,14],[13,14]]) {
+            correct_strategy = 'Three of a kind or better (four of a straight flush)'
+            hold_hand = wild_cards.collect()
+            for (card in hand) {
+                if (card[1] in max_deuceless_suit_vals.sort()[1..2]\
+                  && card[0][1] == grouped_deuceless_suits.max{ it.value}.key) {
+                    hold_hand.add(card)
+                }
+            }
+        }
         //two deuces
         else {
             correct_strategy = 'Three of a kind or better'
