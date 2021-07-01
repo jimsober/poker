@@ -234,7 +234,7 @@ def two_deuces(List hand) {
     if (wild_cards.size() == 2) {
         //wild royal flush
         if (grouped_deuceless_suits.size() == 1 && grouped_deuceless_ranks in [['0':1,'J':1,'Q':1],\
-          ['0':1,'J':1,'K':1],['0':1,'J':1,'A':1],['0':1,'Q':1,'K':1],['0':1,'Q':1,'Q':1],['0':1,'K':1,'A':1],\
+          ['0':1,'J':1,'K':1],['0':1,'J':1,'A':1],['0':1,'Q':1,'K':1],['0':1,'Q':1,'A':1],['0':1,'K':1,'A':1],\
           ['J':1,'Q':1,'K':1],['J':1,'Q':1,'A':1],['J':1,'K':1,'A':1],['Q':1,'K':1,'A':1]]) {
             println 'Wild royal flush!' + '\7'
             hold_hand = hand.collect()

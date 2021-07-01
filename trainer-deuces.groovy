@@ -795,7 +795,7 @@ def no_deuces(List hand) {
     List max_suit_vals = []
     for (card in hand) {
         if (card[0][1] == grouped_suits.max{ it.value }.key) {
-            if (card[1] in max_suit_vals || card[1] == 2) {
+            if (card[1] in max_suit_vals) {
             }
             else {
                 max_suit_vals.add(card[1])
