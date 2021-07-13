@@ -672,6 +672,17 @@ def one_deuce(List hand) {
           [9,10],[9,11],[9,12],[9,13]]) {
             correct_strategy = 'Three of a straight flush'
             hold_hand = wild_cards.collect()
+            if (max_deuceless_suit_vals.sort()[1..2] in [[3,14],[4,14],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],\
+              [4,8],[5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],[7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],\
+              [8,12],[9,10],[9,11],[9,12],[9,13]]) {
+                alt_hold_hand = wild_cards.collect()
+                for (card in hand) {
+                    if (card[0][1] == grouped_deuceless_suits.max{ it.value }.key && \
+                      card[1] in max_deuceless_suit_vals.sort()[1..2]) {
+                        alt_hold_hand.add(card)
+                    }
+                }
+            }
             for (card in hand) {
                 if (card[0][1] == grouped_deuceless_suits.max{ it.value }.key && \
                   card[1] in max_deuceless_suit_vals.sort()[0..1]) {
