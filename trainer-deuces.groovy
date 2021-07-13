@@ -1116,14 +1116,14 @@ def discard(List hand, List hold_hand, List alt_hold_hand, String correct_strate
         }
         def different = discard_hand.plus(hold_hand)
         different.removeAll(discard_hand.intersect(hold_hand))
-        if (alt_hold_hand.size() == 0 && different) {
+        if (different && alt_hold_hand.size() == 0) {
             accurate = false
             println '\7'
             System.console().readLine 'That is not the correct stategy. Press <Enter> to try again.'
             discard_hand = hand.collect()
             show(discard_hand)
         }
-        else if (alt_hold_hand.size() == 0) {
+        else if (!different) {
             println 'Correct strategy! ('+correct_strategy+').'
             try_again = false
         }
