@@ -664,18 +664,18 @@ def one_deuce(List hand) {
                 }
             }
         }
-//        else if (grouped_deuceless_suits.max{ it.value }.value == 2 && (max_suits.size() > 1 && \
-//          max_deuceless_suit_vals2.sort() in [[3,14],[4,14],[5,14,],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],[4,8],\
-//          [5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],[7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],[8,12],\
-//          [9,10],[9,11],[9,12],[9,13]])) {
-//            correct_strategy = 'Three of a straight flush'
-//            hold_hand = wild_cards.collect()
-//            for (card in hand) {
-//                if (card[0][1] in max_suits2 && card[1] in max_deuceless_suit_vals2) {
-//                    hold_hand.add(card)
-//                }
-//            }
-//        }
+        else if (grouped_deuceless_suits.max{ it.value }.value == 2 && (max_suits.size() > 1 && \
+          max_deuceless_suit_vals2.sort() in [[3,14],[4,14],[5,14,],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],[4,8],\
+          [5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],[7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],[8,12],\
+          [9,10],[9,11],[9,12],[9,13]])) {
+            correct_strategy = 'Three of a straight flush'
+            hold_hand = wild_cards.collect()
+            for (card in hand) {
+                if (card[0][1] in max_suits2 && card[1] in max_deuceless_suit_vals2) {
+                    hold_hand.add(card)
+                }
+            }
+        }
         else if (grouped_deuceless_suits.max{ it.value }.value == 3 && max_suits.size() == 1 && \
           max_deuceless_suit_vals.sort()[0..1] in [[3,14],[4,14],[3,4],[3,5],[3,6],[3,7],[4,5],[4,6],[4,7],[4,8],\
           [5,6],[5,7],[5,8],[5,9],[6,7],[6,8],[6,9],[6,10],[7,8],[7,9],[7,10],[7,11],[8,9],[8,10],[8,11],[8,12],\
