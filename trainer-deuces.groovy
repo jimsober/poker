@@ -42,9 +42,6 @@ def init_deck() {
 }
 
 def init_num_hands(running_total, total_attempts, accurate_attempts) {
-    if (total_attempts != 0) {
-        println 'Accuracy: ' + (100 * (accurate_attempts/total_attempts)).round(1).toString() + '%'
-    }
     println 'Balance: ' + running_total.toString()
     try {
         num_hands
@@ -1630,7 +1627,21 @@ def mainMethod() {
             (hand, replay_hand, total_attempts, accurate_attempts) = discard(hand, hold_hand, alt_hold_hand, correct_strategy, total_attempts, accurate_attempts, replayed)
             results = draw(hand, deck, num_hands)
             (payout, running_total) = show_all(results, num_hands, running_total)
-            (replay, play_again, hand, running_total, replayed) = end_of_game(play_again, replay_hand, payout, running_total, replayed)
+            if (accurate_attempts != total_attempts) {
+                println 'Game Over.'
+                println 'Your accuracy has fallen below 100%.' + '\7'
+                again_input_err = false
+                replay = false
+                play_again = false
+                if (running_total > 0) {
+                    println 'Credit balance. Cash dispensed below.'
+                }
+                else {
+                     println 'Balance due. Insert credit card below.'
+                }
+            } else {
+                (replay, play_again, hand, running_total, replayed) = end_of_game(play_again, replay_hand, payout, running_total, replayed)
+            }
         }
     }
 }
