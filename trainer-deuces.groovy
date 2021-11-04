@@ -1088,6 +1088,15 @@ def discard(List hand, List hold_hand, List alt_hold_hand, String correct_strate
                     discard_hand = hand.collect()
                     show(discard_hand)
                 }
+                else if (discard.trim().size() == 1) {
+                    printf 'Invalid entry. Select a card from [ '
+                    for (card in discard_hand) {
+                        style = colorize(card[0])
+                        printf style+card[0]
+                        printf default_style+' '
+                    }
+                    printf '] or use < ! > with ranks, = ! with suits.\n' + '\7'
+                }
                 else if (validate(discard, discard_hand)) {
                     if (discard_hand.findAll { it[0] == discard.trim().toUpperCase() } != []) {
                         discard_input_err = false
