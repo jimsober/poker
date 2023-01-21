@@ -1,4 +1,0 @@
-docker build . -f Dockerfile.deuces-groovy -t deuces-groovy
-docker build . -f Dockerfile.poker-groovy -t poker-groovy
-docker build . -f Dockerfile.stacker-deuces-groovy -t stacker-deuces-groovy
-docker build . -f Dockerfile.trainer-deuces-groovy -t trainer-deuces-groovy

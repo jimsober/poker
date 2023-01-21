@@ -1,4 +1,0 @@
-docker run -it --rm poker-groovy
-docker run -it --rm deuces-groovy
-docker run -it --rm trainer-deuces-groovy
-docker run -it --rm stacker-deuces-groovy

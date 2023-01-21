@@ -1,3 +1,0 @@
-FROM groovy:jre8
-COPY ./deuces.groovy /
-ENTRYPOINT ["/deuces.groovy"]

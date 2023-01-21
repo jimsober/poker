@@ -1,3 +1,0 @@
-FROM groovy:jre8
-COPY ./poker.groovy /
-ENTRYPOINT ["/poker.groovy"]
