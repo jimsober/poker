@@ -1398,38 +1398,62 @@ def end_of_game(play_again, replay_hand, payout, running_total) {
     println 'Game Over.'
     Boolean again_input_err = true
     while (again_input_err) {
-        String again_yn = System.console().readLine 'Press <Enter> to play again or enter R to replay the hand or Q to quit: '
-        if (again_yn.trim() == '') {
-            again_input_err = false
-            replay = false
-            System.out.print("\033[H\033[2J")
-            System.out.flush()
-        }
-        else if (again_yn.toUpperCase() == 'R') {
-            again_input_err = false
-            hand = replay_hand.collect()
-            replay = true
-            play_again = true
-            running_total -= payout
-            System.out.print("\033[H\033[2J")
-            System.out.flush()
-        }
-        else if (again_yn.toUpperCase() == 'Q') {
-            again_input_err = false
-            replay = false
-            play_again = false
-            if (running_total > 0) {
-                println 'Credit balance. Cash dispensed below.'
+        if (running_total > 0) {
+            String again_yn = System.console().readLine 'Press <Enter> to play again or enter R to replay the hand or Q to quit: '
+            if (again_yn.trim() == '') {
+                again_input_err = false
+                replay = false
+                System.out.print("\033[H\033[2J")
+                System.out.flush()
             }
-            else if (running_total == 0) {
-                println 'You leave with nothing. Play again if you dare!'
+            else if (again_yn.toUpperCase() == 'R') {
+                again_input_err = false
+                hand = replay_hand.collect()
+                replay = true
+                play_again = true
+                running_total -= payout
+                System.out.print("\033[H\033[2J")
+                System.out.flush()
+            }
+            else if (again_yn.toUpperCase() == 'Q') {
+                again_input_err = false
+                replay = false
+                play_again = false
+                if (running_total > 0) {
+                    println 'Credit balance. Cash dispensed below.'
+                }
+                else if (running_total == 0) {
+                    println 'You leave with nothing. Play again if you dare!'
+                }
+                else {
+                    println 'Balance due. Insert credit card below.'
+                }
             }
             else {
-                println 'Balance due. Insert credit card below.'
+                println 'Try again. ' + '\7'
             }
         }
         else {
-            println 'Try again. ' + '\7'
+            String again_yn = System.console().readLine 'Press <Enter> to quit or enter R to replay the hand: '
+            if (again_yn.trim() == '') {
+                again_input_err = false
+                replay = false
+                play_again = false
+                System.out.print("\033[H\033[2J")
+                System.out.flush()
+            }
+            else if (again_yn.toUpperCase() == 'R') {
+                again_input_err = false
+                hand = replay_hand.collect()
+                replay = true
+                play_again = true
+                running_total -= payout
+                System.out.print("\033[H\033[2J")
+                System.out.flush()
+            }
+            else {
+                println 'Try again. ' + '\7'
+            }
         }
     }
     return [replay, play_again, hand, running_total]
