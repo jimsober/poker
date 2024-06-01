@@ -1,17 +1,5 @@
 #!/usr/bin/env groovy
 
-/* 5-card draw deuces wild poker
-   Natural Royal Flush 800
-   Four Deuces         200
-   Wild Royal Flush     25
-   Five of a Kind       15
-   Straight Flush        9
-   Four of a Kind        5
-   Full House            3
-   Flush                 2
-   Straight              2
-   Three of a Kind       1 */
-
 def init_game() {
     Integer running_total = 100
     System.out.print("\033[H\033[2J")

@@ -1,16 +1,5 @@
 #!/usr/bin/env groovy
 
-/* 5-card draw poker
-   Royal Flush     250
-   Straight Flush   50
-   Four of a Kind   25
-   Full House        9
-   Flush             6
-   Straight          4
-   Three of a Kind   3
-   Two Pair          2
-   Jacks or Better   1 */
-
 def init_game() {
     Integer running_total = 100
     System.out.print("\033[H\033[2J")
